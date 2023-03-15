@@ -50,7 +50,33 @@ long_table <- gather(myDF,key="Metric",value="Score",buying_price:popularity)
 #converts back to original
 wide_table <- long_table %>% spread(key="Metric",value="Score")
 
+df <- mpg
+head(df)
+plt <- ggplot(df, aes(x = fct_infreq(class)))
+plt + geom_bar()
+#the fct_infreq argument makes it ordered , putting fct_rev before it gets opposite order 
+
+mpg_vehicle_count <- df %>% group_by(manufacturer) %>% summarize(Vehicle_Count=n(), .groups = 'keep') %>% arrange(desc(Vehicle_Count))
+mpg_vehicle_count
+plt2 <- ggplot(mpg_vehicle_count, aes(x = fct_rev(fct_reorder(manufacturer, Vehicle_Count)), y = Vehicle_Count))
+plt2 + geom_col() + xlab("HELLO") + ylab("ALSO HELLO") + theme(axis.text.x=element_text(angle=45, hjust=1))
+
+mpg_mean_highway <- subset(df,manufacturer=="toyota") %>% group_by(cyl) %>% summarize(Mean_Hwy=mean(hwy), .groups = 'keep')
+plt3 <- ggplot(mpg_mean_highway, aes(x=cyl , y=Mean_Hwy))               
+plt3 + geom_line() + scale_x_discrete(limits=c(4,6,8)) + scale_y_continuous(breaks=c(16:30))
+
+plt4 <- ggplot(df, aes(x=displ,y=cty , color=class, shape = drv))
+plt4 + geom_point() + labs(x="Engine Size (L)", y="City Fuel-Efficiency (MPG)", color="Vehicle Class!", shape = "Drive Type")
+
+plt5 <- ggplot(df, aes(x = reorder(manufacturer , -hwy), y=(hwy)))
+plt5 + geom_boxplot(lty = 1, fill = "white" , color = "blue" , outlier.colour = "red") + labs(x = "Manufacturer" , y="Highway Fuel Efficiency") + theme(axis.text.x=element_text(angle=45, hjust=1)) + geom_point()
+#adding geom_point() overlays a scatter plot on top! 
+
+both_mpgs <- df %>% gather(key="MPG_Type",value="Rating",c(cty,hwy))
+plt6 <- ggplot(both_mpgs, aes(x = reorder(manufacturer, -Rating), y = Rating, color=MPG_Type))
+plt6 + geom_boxplot() + facet_wrap(vars(MPG_Type)) + theme(axis.text.x=element_text(angle=45, hjust=1)) + labs(x = "Manufacturer")
 
 
 
 
+                              
