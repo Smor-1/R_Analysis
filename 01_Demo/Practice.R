@@ -76,7 +76,9 @@ both_mpgs <- df %>% gather(key="MPG_Type",value="Rating",c(cty,hwy))
 plt6 <- ggplot(both_mpgs, aes(x = reorder(manufacturer, -Rating), y = Rating, color=MPG_Type))
 plt6 + geom_boxplot() + facet_wrap(vars(MPG_Type)) + theme(axis.text.x=element_text(angle=45, hjust=1)) + labs(x = "Manufacturer")
 
-
-
-
+library(tidyverse)
+head(mtcars)
+plt7 <- ggplot(mtcars, aes(x = wt))
+plt7 + geom_density()
+#checking for normality 
                               
