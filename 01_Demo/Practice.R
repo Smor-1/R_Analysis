@@ -80,5 +80,60 @@ library(tidyverse)
 head(mtcars)
 plt7 <- ggplot(mtcars, aes(x = wt))
 plt7 + geom_density()
-#checking for normality 
-                              
+#checking for normality above qualitatively and below quantitatively 
+shapiro.test(mtcars$wt)
+#generally if p < 0.05 then normally distributed 
+
+sample_n(mtcars, 10)
+
+data <- read.csv('used_car_data.csv',check.names = F,stringsAsFactors = F)
+head(data)
+
+plt8 <- ggplot(data,aes(x=log10(Miles_Driven)))
+plt8 + geom_density()
+
+#one sample t-test:
+t.test(log10(sample_n(data, 50)$Miles_Driven),mu=mean(log10(data$Miles_Driven)))
+#so with the p value we can say the means are statistically similar 
+
+sample_1 <- sample_n(data, 50)
+sample_2 <- sample_n(data, 50)
+#two sample t-test:
+t.test(log10(sample_1$Miles_Driven), log10(sample_2$Miles_Driven))
+
+#pair t test, like fuel efficiency before/after oil change, compare 2 samples from different pop
+my_data <- read.csv("mpg_modified.csv")
+data_1999 <- my_data %>% subset(year == 1999)
+data_2008 <- my_data %>% filter(year == 2008)
+t.test(data_1999$hwy, data_2008$hwy, paired = T)
+
+mtcars_filt <- mtcars[,c("hp","cyl")] #filter columns from mtcars dataset
+mtcars_filt$cyl <- factor(mtcars_filt$cyl) #convert numeric column to factor
+summary(aov(hp ~ cyl,data=mtcars_filt)) #compare means across multiple levels
+#wrapped in summary to get the p value 
+
+plt9 <- ggplot(mtcars, aes(x = mpg, y = wt))
+plt9 + geom_point()
+cor(mtcars$mpg, mtcars$wt)
+#returns back -0.87 so good chance that with higher mpg it is a lighter car 
+
+a_matrix <- as.matrix(mtcars[,c("mpg" , "wt" , "hp")])
+cor(a_matrix)
+
+summary(lm(qsec ~ hp,mtcars)) #create linear model
+
+
+model <- lm(qsec ~ hp,mtcars) #create linear model
+#just doing y = mx + b below: 
+yvals <- model$coefficients['hp']*mtcars$hp + model$coefficients['(Intercept)'] #determine y-axis values from linear model
+
+plt10 <- ggplot(mtcars,aes(x=hp,y=qsec)) 
+plt10 + geom_point() + geom_line(aes(y=yvals), color = "purple") #plot scatter and linear model
+
+#with multiple lin reg, no longer y = mx + b, but y = m1x1 + m2x2 .... + b
+summary(lm(qsec ~ mpg + wt + hp,data=mtcars)) #generate multiple linear regression model
+
+#now have this table can check chi squared 
+mt_tbl <- table(mpg$class, mpg$year)
+chisq.test(mt_tbl)
+#if warning message could be because of the small sample size 
