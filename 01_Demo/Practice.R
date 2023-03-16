@@ -82,7 +82,7 @@ plt7 <- ggplot(mtcars, aes(x = wt))
 plt7 + geom_density()
 #checking for normality above qualitatively and below quantitatively 
 shapiro.test(mtcars$wt)
-#generally if p < 0.05 then normally distributed 
+#generally if p > 0.05 then normally distributed 
 
 sample_n(mtcars, 10)
 
